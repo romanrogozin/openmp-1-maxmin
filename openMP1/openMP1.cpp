@@ -69,46 +69,6 @@ double simple_min_max(const std::vector<int>& vec, int& thread_num) {
     return duration.count();
 }
 
-double simple_min_max_2(const std::vector<long long>& vec, int& thread_num) {
-    omp_set_num_threads(thread_num);
-
-    auto start = std::chrono::high_resolution_clock::now();
-
-    long long min_val = std::numeric_limits<long long>::max();
-    long long max_val = std::numeric_limits<long long>::min();
-
-#pragma omp parallel
-    {
-        long long local_min = std::numeric_limits<long long>::max();
-        long long local_max = std::numeric_limits<long long>::min();
-
-#pragma omp for
-        for (int i = 0; i < vec.size(); ++i) {
-            if (vec[i] < local_min) {
-                local_min = vec[i];
-            }
-            if (vec[i] > local_max) {
-                local_max = vec[i];
-            }
-        }
-
-#pragma omp critical
-        {
-            if (local_min < min_val) {
-                min_val = local_min;
-            }
-            if (local_max > max_val) {
-                max_val = local_max;
-            }
-        }
-    }
-
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> duration = end - start;
-
-    return duration.count();
-}
-
 int main() {
     std::vector<int> thread_experiments = { 1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512 };
     std::vector<long long> vector_size_experiments = { 1'000'000,  1'000'000'000, 2'000'000'000 };
