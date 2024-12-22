@@ -5,7 +5,7 @@
 #include <limits>
 #include <chrono>
 
-int calculate_minmax(const std::vector<long long>& vec) {
+int calculate_minmax_with_reduction(const std::vector<long long>& vec) {
 
     std::cout << "Input threads number for omp: ";
 
@@ -71,7 +71,7 @@ double simple_min_max(const std::vector<int>& vec, int& thread_num) {
 
 int main() {
     std::vector<int> thread_experiments = { 1, 2, 4, 8, 16, 24, 32, 64, 128, 256, 512 };
-    std::vector<long long> vector_size_experiments = { 1'000'000,  1'000'000'000, 2'000'000'000 };
+    std::vector<int> vector_size_experiments = { 1'000'000,  1'000'000'000, 2'000'000'000 };
     int runs_count = 5;
 
     std::random_device rd; // Источник случайных чисел
@@ -83,9 +83,9 @@ int main() {
     for (int ii = 0; ii < vector_size_experiments.size(); ii++)
     {
         long long vector_size_experiment = vector_size_experiments[ii];
-        std::vector<long long> vec(vector_size_experiment);
+        std::vector<int> vec(vector_size_experiment);
 
-        for (long long iii = 0; iii < vector_size_experiment; ++iii) {
+        for (int iii = 0; iii < vector_size_experiment; ++iii) {
             vec[iii] = dist(gen);
         }
 
@@ -96,7 +96,7 @@ int main() {
             double total_execution_time = 0;
             for (int j = 0; j < runs_count; j++)
             {
-                total_execution_time += simple_min_max_2(vec, current_thread_experiment);
+                total_execution_time += simple_min_max(vec, current_thread_experiment);
             }
             double avg_exexution_time = total_execution_time / runs_count;
             std::cout << "Vector size:" << vector_size_experiment << "; Threads: " << current_thread_experiment << "; Execution time " << avg_exexution_time << ";" << std::endl;
